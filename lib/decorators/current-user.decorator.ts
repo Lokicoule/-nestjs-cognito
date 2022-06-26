@@ -3,9 +3,9 @@ import { COGNITO_USER_CONTEXT_PROPERTY } from '../constants';
 import { CognitoUser } from '../models';
 
 /**
- * Decorator for the current user
- * @param {ExecutionContext} context - The context
- * @returns {CognitoUser} - The user
+ * Decorator that can be used to inject the current user into a controller.
+ * @param {string} [propertyName] The name of the property to inject the user into.
+ * @returns {(target: object, key: string | symbol, descriptor: TypedPropertyDescriptor<any>) => any}
  */
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext): CognitoUser => {

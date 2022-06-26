@@ -13,7 +13,7 @@ export abstract class AbstractCognitoGuard implements CanActivate {
   constructor(private readonly cognitoService: CognitoService) {}
 
   /**
-   * Get the user from the request
+   * Check if the user is authenticated
    * @param {Request} request - The request
    * @returns {Promise<boolean>} - True or false if the user is authenticated or not
    * @memberof AbstractCognitoGuard
