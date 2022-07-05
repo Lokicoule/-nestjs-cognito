@@ -14,31 +14,29 @@
   },
   "scripts": {
     "build": "rimraf -rf dist && tsc -p tsconfig.json",
-    "format": "prettier --write \"{lib,test}/**/*.ts\"",
+    "format": "prettier --write \"{lib,tests}/**/*.ts\"",
     "lint": "eslint 'lib/**/*.ts' --fix",
-    "prepublish:npm": "npm run build",
-    "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
-    "publish:next": "npm publish --access public --tag next",
-    "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
+    "prepublish:npm": "npm run build",
     "prerelease": "npm run build",
-    "release": "release-it"
-  },
-  "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.105.0"
+    "publish:next": "npm publish --access public --tag next",
+    "publish:npm": "npm publish --access public",
+    "release": "release-it",
+    "test": "jest"
   },
   "peerDependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.105.0",
     "@nestjs/common": "^7.0.0 || ^8.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.0.0 || ^7.0.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.105.0",
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-angular": "^17.0.3",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/graphql": "^10.0.16",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
@@ -53,6 +51,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "^8.0.1",
     "jest": "^27.0.6",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.3.2",
     "reflect-metadata": "^0.1.13",
     "release-it": "^15.1.0",
@@ -64,6 +63,28 @@
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
     "typescript": "^4.3.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write"
+    ]
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { COGNITO_USER_CONTEXT_PROPERTY } from '../constants';
-import { CognitoUser } from '../models';
+import { COGNITO_USER_CONTEXT_PROPERTY } from './user.constants';
+import { User } from './user.model';
 
 /**
  * Decorator that can be used to inject the current user into a controller.
@@ -8,7 +8,7 @@ import { CognitoUser } from '../models';
  * @returns {(target: object, key: string | symbol, descriptor: TypedPropertyDescriptor<any>) => any}
  */
 export const CurrentUser = createParamDecorator(
-  (data: unknown, context: ExecutionContext): CognitoUser => {
+  (data: unknown, context: ExecutionContext): User => {
     const request = context.switchToHttp().getRequest();
     return request[COGNITO_USER_CONTEXT_PROPERTY];
   },

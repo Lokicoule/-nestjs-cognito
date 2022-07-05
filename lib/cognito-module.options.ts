@@ -1,13 +1,20 @@
-import { CognitoIdentityProviderClientConfig } from '@aws-sdk/client-cognito-identity-provider';
+import {
+  CognitoIdentityProviderClientConfig,
+  UserPoolClientType,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { ModuleMetadata, Provider, Type } from '@nestjs/common';
 
 /**
  * @interface CognitoModuleOptions - Options for the CognitoModule
  * @property {string} region - The region
  * @property { accessKeyId: string, secretAccessKey: string, sessionToken: string } credentials - The AWS credentials
+ * @property {string} userPoolId - The user pool ID
  */
 export type CognitoModuleOptions = CognitoIdentityProviderClientConfig &
-  Required<Pick<CognitoIdentityProviderClientConfig, 'region' | 'credentials'>>;
+  Required<
+    Pick<CognitoIdentityProviderClientConfig, 'region' | 'credentials'>
+  > &
+  Pick<UserPoolClientType, 'UserPoolId'>;
 
 /**
  * @interface CognitoModuleOptionsFactory - Metadata for the CognitoModule
@@ -33,11 +40,11 @@ export interface CognitoModuleOptionsFactory {
  */
 export interface CognitoModuleAsyncOptions
   extends Pick<ModuleMetadata, 'imports'> {
-  useExisting?: Type<CognitoModuleOptionsFactory>;
+  extraProviders?: Provider[];
+  inject?: any[];
   useClass?: Type<CognitoModuleOptionsFactory>;
+  useExisting?: Type<CognitoModuleOptionsFactory>;
   useFactory?: (
     ...args: any[]
   ) => Promise<CognitoModuleOptions> | CognitoModuleOptions;
-  inject?: any[];
-  extraProviders?: Provider[];
 }

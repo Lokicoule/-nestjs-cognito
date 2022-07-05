@@ -1,13 +1,13 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { AbstractCognitoGuard } from './abstract-cognito.guard';
+import { AbstractGuard } from '../abstract.guard';
 
 @Injectable()
-export class CognitoGuard extends AbstractCognitoGuard {
+export class AuthenticationGuard extends AbstractGuard {
   /**
    * Get the request from the context
    * @param {ExecutionContext} context - The context
    * @returns {Request} - The request
-   * @memberof CognitoGuard
+   * @memberof AuthenticationGuard
    */
   public getRequest(context: ExecutionContext) {
     return context.switchToHttp().getRequest();

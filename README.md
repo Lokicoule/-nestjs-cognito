@@ -7,7 +7,7 @@
 ## Installation
 
 ```bash
-$ npm i --save nestjs-cognito
+npm i @aws-sdk/client-cognito-identity-provider nestjs-cognito
 ```
 
 ## Configuration
@@ -19,9 +19,13 @@ $ npm i --save nestjs-cognito
  * @interface CognitoModuleOptions - Options for the CognitoModule
  * @property {string} region - The region
  * @property { accessKeyId: string, secretAccessKey: string, sessionToken: string } credentials - The AWS credentials
+ * @property {string} userPoolId - The user pool ID
  */
 export type CognitoModuleOptions = CognitoIdentityProviderClientConfig &
-  Required<Pick<CognitoIdentityProviderClientConfig, 'region' | 'credentials'>>;
+  Required<
+    Pick<CognitoIdentityProviderClientConfig, 'region' | 'credentials'>
+  > &
+  Pick<UserPoolClientType, 'UserPoolId'>;
 
 /**
  * @interface CognitoModuleOptionsFactory - Metadata for the CognitoModule
@@ -44,7 +48,6 @@ export interface CognitoModuleOptionsFactory {
  * @property {CognitoModuleOptions} useFactory - The factory function to create the CognitoModuleOptions
  * @property {CognitoModuleOptions} useClass - The class to create the CognitoModuleOptions
  * @property {CognitoModuleOptions} useExisting - The existing instance of the CognitoModuleOptions
- * @property {CognitoModuleOptions}
  */
 export interface CognitoModuleAsyncOptions
   extends Pick<ModuleMetadata, 'imports'> {
@@ -74,6 +77,7 @@ import { Module } from '@nestjs/common';
         accessKeyId: 'XXXXXXXXXXXXXXXXMYFV5',
         secretAccessKey: 'jhXXXXXXxxxxxXXXXXxxxXXXXxxxxxXXXXXTXNGI',
       },
+      UserPoolId: 'eu-west-X_XXXXXXX', // Optional, but is needed by Authorization
     }),
   ],
 })
@@ -103,6 +107,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           accessKeyId: configService.get<string>('COGNITO_ACCESS_KEY_ID'),
           secretAccessKey: configService.get('COGNITO_SECRET_ACCESS_KEY'),
         },
+        UserPoolId: configService.get('COGNITO_USER_POOL_ID'), // Optional, but is needed by Authorization
       }),
       inject: [ConfigService],
     }),
@@ -113,15 +118,55 @@ export class AppModule {}
 
 ## Usage
 
+You can use the cognito identity provider injector or the built-in `nestjs-cognito` decorators and guards.
+
+### Cognito Identity Provider
+
 ```ts
-import { CognitoGuard, CurrentUser } from 'nestjs-cognito';
+export class MyService {
+  constructor(
+    @InjectCognitoIdentityProvider()
+    private readonly client: CognitoIdentityProvider,
+    @InjectCognitoUserPoolId()
+    private readonly userPoolId: string,
+  ) {}
+}
+```
+
+### Built-in decorators and guards
+
+- Decorate the controller with the `@Authentication` decorator or with the `@UseGuards` decorator to apply the `AuthenticationGuard` to the controller in order to ensure that the user is authenticated.
+- Decorate the resolver with the `@Authorization` decorator or with the `@UseGuards` decorator to apply the `AuthorizationGuard` in order to ensure that the user is authorized.
+- Decorate method arguments with the `@CurrentUser` decorator to get the current user.
+
+<b>During the `authorization` process, we already check if the user is authenticated, so you don't need to use `authentication` guard or decorator.</b>
+
+In addition, you can find more details about `@UseGuards` decorator [here](https://docs.nestjs.com/guards).
+
+Here is an example that shows how to use authentication:
+
+```ts
+import {
+  Authentication,
+  AuthenticationGuard,
+  CurrentUser,
+} from 'nestjs-cognito';
 import { Controller, Get, UseGuards } from '@nestjs/common';
 
+@Controller('dogs')
+@Authentication()
+export class DogsController {
+  @Get()
+  findAll(@CurrentUser() me: User): string {
+    return 'This action returns all my dogs';
+  }
+}
+
 @Controller('cats')
-@UseGuards(CognitoGuard)
+@UseGuards(AuthenticationGuard)
 export class CatsController {
   @Get()
-  findAll(@CurrentUser() me: CognitoUser): string {
+  findAll(@CurrentUser() me: User): string {
     return 'This action returns all my cats';
   }
 }
@@ -129,9 +174,62 @@ export class CatsController {
 @Controller('dogs')
 export class DogsController {
   @Get()
-  @UseGuards(CognitoGuard)
-  findAll(@CurrentUser() me: CognitoUser): string {
+  @UseGuards(AuthenticationGuard)
+  findAll(@CurrentUser() me: User): string {
     return 'This action returns all my dogs';
+  }
+}
+```
+
+Here is an example that shows how to use authorization:
+
+```ts
+import { Authorization, AuthorizationGuard, CurrentUser } from 'nestjs-cognito';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+
+@Controller('dogs')
+@Authorization({
+  allowedGroups: ['user', 'admin'],
+  requiredGroups: ['moderator'],
+  prohibitedGroups: ['visitor'],
+})
+export class DogsController {
+  @Get()
+  findAll(@CurrentUser() me: User): string {
+    return 'This action returns all my dogs';
+  }
+}
+
+@Controller('cats')
+@Authorization(['user']) // allowedGroups by default
+export class CatsController {
+  @Get()
+  findAll(@CurrentUser() me: User): string {
+    return 'This action returns all my cats';
+  }
+}
+
+@Controller('cats')
+@UseGuards(
+  AuthorizationGuard({
+    allowedGroups: ['user', 'admin'],
+    requiredGroups: ['moderator'],
+    prohibitedGroups: ['visitor'],
+  }),
+)
+export class CatsController {
+  @Get()
+  findAll(@CurrentUser() me: User): string {
+    return 'This action returns all my cats';
+  }
+}
+
+@Controller('cats')
+export class CatsController {
+  @Get()
+  @UseGuards(AuthorizationGuard(['user', 'admin']))
+  findAll(@CurrentUser() me: User): string {
+    return 'This action returns all my cats';
   }
 }
 ```

@@ -1,19 +1,25 @@
-import { CognitoIdentityProvider } from '@aws-sdk/client-cognito-identity-provider';
-import { DynamicModule, Logger, Module, Provider } from '@nestjs/common';
-import {
-  COGNITO_INSTANCE_TOKEN,
-  COGNITO_MODULE_OPTIONS,
-} from './constants/cognito.constants';
-import { CognitoService } from './services/cognito.service';
+import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import {
   CognitoModuleAsyncOptions,
   CognitoModuleOptions,
   CognitoModuleOptionsFactory,
-} from './interfaces/cognito-module.interface';
+} from './cognito-module.options';
+import {
+  COGNITO_INSTANCE_TOKEN,
+  COGNITO_MODULE_OPTIONS,
+  COGNITO_USER_POOL_ID,
+} from './cognito/cognito.constants';
+import { CognitoService } from './cognito/cognito.service';
+import {
+  getCognitoIdentityProviderValue,
+  getUserPoolIdProviderValue,
+} from './cognito/cognito.utils';
+import { ValidatorService } from './validators';
 
+@Global()
 @Module({
-  providers: [CognitoService],
-  exports: [CognitoService],
+  providers: [ValidatorService, CognitoService],
+  exports: [ValidatorService, CognitoService],
 })
 export class CognitoModule {
   /**
@@ -22,19 +28,20 @@ export class CognitoModule {
    * @static
    * @memberof CognitoModule
    */
-  static register(config: CognitoModuleOptions): DynamicModule {
+  static register(options: CognitoModuleOptions): DynamicModule {
     return {
       module: CognitoModule,
       providers: [
         {
           provide: COGNITO_INSTANCE_TOKEN,
-          useValue: new CognitoIdentityProvider({
-            region: config.region,
-            credentials: config.credentials,
-          }),
+          useValue: getCognitoIdentityProviderValue(options),
+        },
+        {
+          provide: COGNITO_USER_POOL_ID,
+          useValue: getUserPoolIdProviderValue(options),
         },
       ],
-      exports: [COGNITO_INSTANCE_TOKEN],
+      exports: [COGNITO_INSTANCE_TOKEN, COGNITO_USER_POOL_ID],
     };
   }
 
@@ -45,8 +52,6 @@ export class CognitoModule {
    * @memberof CognitoModule
    */
   static registerAsync(options: CognitoModuleAsyncOptions): DynamicModule {
-    const logger = new Logger(CognitoModule.name);
-
     return {
       module: CognitoModule,
       imports: options.imports,
@@ -54,23 +59,17 @@ export class CognitoModule {
         ...this.createAsyncProviders(options),
         {
           provide: COGNITO_INSTANCE_TOKEN,
-          useFactory: async (config: CognitoModuleOptions) => {
-            if (!Boolean(config.region)) {
-              logger.warn('CognitoModule: region is missing. ');
-            }
-            if (!Boolean(config.credentials)) {
-              logger.warn('CognitoModule: credentials are missing.');
-            }
-            return new CognitoIdentityProvider({
-              region: config.region,
-              credentials: config.credentials,
-            });
-          },
+          useFactory: getCognitoIdentityProviderValue,
+          inject: [COGNITO_MODULE_OPTIONS],
+        },
+        {
+          provide: COGNITO_USER_POOL_ID,
+          useFactory: getUserPoolIdProviderValue,
           inject: [COGNITO_MODULE_OPTIONS],
         },
         ...(options.extraProviders || []),
       ],
-      exports: [COGNITO_INSTANCE_TOKEN],
+      exports: [COGNITO_INSTANCE_TOKEN, COGNITO_USER_POOL_ID],
     };
   }
 
