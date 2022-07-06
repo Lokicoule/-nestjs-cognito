@@ -30,9 +30,7 @@ describe('ValidatorService', () => {
 
     it('should be truthy, user has allowed groups', () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [{ GroupName: 'Admin' }, { GroupName: 'User' }],
-      });
+      user.groups = ['admin', 'user'];
       const options = {
         allowedGroups: ['admin'],
       };
@@ -41,18 +39,14 @@ describe('ValidatorService', () => {
 
     it('should be truthy, user has implicit allowed groups', () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [{ GroupName: 'Admin' }, { GroupName: 'User' }],
-      });
+      user.groups = ['admin', 'user'];
       expect(service.validate(user, ['User'])).toBeTruthy();
       expect(service.validate(user, ['Admin'])).toBeTruthy();
     });
 
     it("should be truthy, user doesn't have prohibited groups and has allowed groups", () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [{ GroupName: 'Admin' }, { GroupName: 'Moderator' }],
-      });
+      user.groups = ['admin', 'moderator'];
       const options = {
         allowedGroups: ['Admin'],
         prohibitedGroups: ['User'],
@@ -62,13 +56,7 @@ describe('ValidatorService', () => {
 
     it('should be truthy, user has required groups', () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [
-          { GroupName: 'Admin' },
-          { GroupName: 'User' },
-          { GroupName: 'Moderator' },
-        ],
-      });
+      user.groups = ['admin', 'user'];
       const options = {
         requiredGroups: ['Admin', 'User'],
         allowedGroups: ['Moderator'],
@@ -78,9 +66,7 @@ describe('ValidatorService', () => {
 
     it("should be falsy, user doesn't have required groups", () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [{ GroupName: 'Moderator' }, { GroupName: 'User' }],
-      });
+      user.groups = ['moderator', 'user'];
       const options = {
         requiredGroups: ['Admin'],
         allowedGroups: ['Admin', 'Moderator'],
@@ -90,10 +76,9 @@ describe('ValidatorService', () => {
 
     it('should be falsy, user has prohibited group', () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [{ GroupName: 'Admin' }, { GroupName: 'User' }],
-      });
+      user.groups = ['admin', 'user'];
       const options = {
+        requiredGroups: ['Admin', 'user'],
         prohibitedGroups: ['Admin'],
       };
       expect(service.validate(user, options)).toBeFalsy();
@@ -101,9 +86,7 @@ describe('ValidatorService', () => {
 
     it("should be truthy, user doesn't have prohibited group", () => {
       const user: User = new User('username', 'email');
-      user.addGroupsFromAdminListGroupsForUserResponse({
-        Groups: [{ GroupName: 'Admin' }, { GroupName: 'User' }],
-      });
+      user.groups = ['admin', 'user'];
       const options = {
         prohibitedGroups: ['Moderator'],
       };

@@ -5,9 +5,8 @@ describe('ProhibitedGroupsValidator', () => {
   it("should be truthy, user doesn't have Admin group", () => {
     const prohibitedGroupsValidator = new ProhibitedGroupsValidator();
     const user: User = new User('username', 'email');
-    user.addGroupsFromAdminListGroupsForUserResponse({
-      Groups: [{ GroupName: 'Moderator' }, { GroupName: 'User' }],
-    });
+    user.groups = ['Moderator', 'user'];
+
     const options = {
       prohibitedGroups: ['Admin'],
     };
@@ -16,9 +15,8 @@ describe('ProhibitedGroupsValidator', () => {
   it('should be falsy, user has Admin group', () => {
     const prohibitedGroupsValidator = new ProhibitedGroupsValidator();
     const user: User = new User('username', 'email');
-    user.addGroupsFromAdminListGroupsForUserResponse({
-      Groups: [{ GroupName: 'Admin' }, { GroupName: 'User' }],
-    });
+    user.groups = ['admin', 'user'];
+
     const options = {
       prohibitedGroups: ['Admin'],
     };
@@ -28,9 +26,8 @@ describe('ProhibitedGroupsValidator', () => {
   it('should be truthy, prohibitedGroups option is empty', () => {
     const prohibitedGroupsValidator = new ProhibitedGroupsValidator();
     const user: User = new User('username', 'email');
-    user.addGroupsFromAdminListGroupsForUserResponse({
-      Groups: [{ GroupName: 'Moderator' }, { GroupName: 'User' }],
-    });
+    user.groups = ['moderator', 'user'];
+
     expect(prohibitedGroupsValidator.validate(user, {})).toBeTruthy();
   });
 });

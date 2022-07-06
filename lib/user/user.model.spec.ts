@@ -1,44 +1,23 @@
 import { User } from './user.model';
 
 describe('User', () => {
-  it('should return a valid User', () => {
-    const user = User.fromGetUserResponse({
-      UserAttributes: [{ Name: 'email', Value: 'test@email.com' }],
-      Username: 'test',
+  describe('groups', () => {
+    it('should return a lower case group', () => {
+      const user = new User('username', 'email');
+      user.groups = ['TEST'];
+      expect(user.groups).toEqual(['test']);
     });
-    expect(user).toBeTruthy();
-    expect(user.username).toBe('test');
-    expect(user.email).toBe('test@email.com');
-    expect(user.groups).toBeUndefined();
-  });
 
-  it('should return a valid User with groups', () => {
-    const user = User.fromGetUserResponse({
-      UserAttributes: [{ Name: 'email', Value: 'test@email.com' }],
-      Username: 'test',
+    it('should return lower case groups', () => {
+      const user = new User('username', 'email');
+      user.groups = ['TEST', 'TEST2'];
+      expect(user.groups).toEqual(['test', 'test2']);
     });
-    expect(user).toBeTruthy();
-    expect(user.username).toBe('test');
-    expect(user.email).toBe('test@email.com');
-    expect(user.groups).toBeUndefined();
-    user.addGroupsFromAdminListGroupsForUserResponse({
-      Groups: [{ GroupName: 'test' }, { GroupName: 'test2' }],
-    });
-    expect(user.groups).toEqual(['test', 'test2']);
-  });
 
-  it('should return a valid User with no group', () => {
-    const user = User.fromGetUserResponse({
-      UserAttributes: [{ Name: 'email', Value: 'test@email.com' }],
-      Username: 'test',
+    it('should return empty groups', () => {
+      const user = new User('username', 'email');
+      user.groups = [];
+      expect(user.groups).toEqual([]);
     });
-    expect(user).toBeTruthy();
-    expect(user.username).toBe('test');
-    expect(user.email).toBe('test@email.com');
-    expect(user.groups).toBeUndefined();
-    user.addGroupsFromAdminListGroupsForUserResponse({
-      Groups: [],
-    });
-    expect(user.groups).toEqual([]);
   });
 });
