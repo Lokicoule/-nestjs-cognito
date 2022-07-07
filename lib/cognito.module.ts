@@ -5,12 +5,14 @@ import {
   CognitoModuleOptionsFactory,
 } from './cognito-module.options';
 import {
+  COGNITO_CLIENT_INSTANCE_TOKEN,
   COGNITO_INSTANCE_TOKEN,
   COGNITO_MODULE_OPTIONS,
   COGNITO_USER_POOL_ID,
 } from './cognito/cognito.constants';
 import { CognitoService } from './cognito/cognito.service';
 import {
+  getCognitoIdentityProviderClientValue,
   getCognitoIdentityProviderValue,
   getUserPoolIdProviderValue,
 } from './cognito/cognito.utils';
@@ -37,11 +39,19 @@ export class CognitoModule {
           useValue: getCognitoIdentityProviderValue(options),
         },
         {
+          provide: COGNITO_CLIENT_INSTANCE_TOKEN,
+          useValue: getCognitoIdentityProviderClientValue(options),
+        },
+        {
           provide: COGNITO_USER_POOL_ID,
           useValue: getUserPoolIdProviderValue(options),
         },
       ],
-      exports: [COGNITO_INSTANCE_TOKEN, COGNITO_USER_POOL_ID],
+      exports: [
+        COGNITO_INSTANCE_TOKEN,
+        COGNITO_CLIENT_INSTANCE_TOKEN,
+        COGNITO_USER_POOL_ID,
+      ],
     };
   }
 
@@ -63,13 +73,22 @@ export class CognitoModule {
           inject: [COGNITO_MODULE_OPTIONS],
         },
         {
+          provide: COGNITO_CLIENT_INSTANCE_TOKEN,
+          useFactory: getCognitoIdentityProviderClientValue,
+          inject: [COGNITO_MODULE_OPTIONS],
+        },
+        {
           provide: COGNITO_USER_POOL_ID,
           useFactory: getUserPoolIdProviderValue,
           inject: [COGNITO_MODULE_OPTIONS],
         },
         ...(options.extraProviders || []),
       ],
-      exports: [COGNITO_INSTANCE_TOKEN, COGNITO_USER_POOL_ID],
+      exports: [
+        COGNITO_INSTANCE_TOKEN,
+        COGNITO_CLIENT_INSTANCE_TOKEN,
+        COGNITO_USER_POOL_ID,
+      ],
     };
   }
 

@@ -1,27 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import {
-  AuthenticationValidator,
-  AUTHENTICATION_VALIDATION,
-} from '../authentication/authentication.validator';
+import { AuthenticationValidator } from '../authentication/authentication.validator';
 import { AuthorizationOptions } from '../authorization/authorization.options';
-import {
-  AuthorizationValidator,
-  AUTHORIZATION_VALIDATION,
-} from '../authorization/authorization.validator';
+import { AuthorizationValidator } from '../authorization/authorization.validator';
 import { User } from '../user/user.model';
 import { AbstractValidator } from './abstract.validator';
 
 @Injectable()
 export class ValidatorService {
-  private _validators: Record<string, AbstractValidator>;
-
-  constructor() {
-    this._validators = {
-      ...AuthenticationValidator,
-      ...AuthorizationValidator,
-    };
-  }
-
   /**
    * Validates the user against the given options.
    * @param user The user to validate.
@@ -38,8 +23,8 @@ export class ValidatorService {
    * @returns The validator to use.
    */
   private getValidator(options?: AuthorizationOptions): AbstractValidator {
-    return this._validators[
-      Boolean(options) ? AUTHORIZATION_VALIDATION : AUTHENTICATION_VALIDATION
-    ];
+    return Boolean(options)
+      ? AuthorizationValidator.useFactory(options)
+      : AuthenticationValidator.useFactory();
   }
 }

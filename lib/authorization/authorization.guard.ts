@@ -27,10 +27,8 @@ export const createAuthorizationGuard = (
       await super.canActivate(context);
 
       const request = this.getRequest(context);
-      const user: User = await this.cognitoService.getUserGroups(
-        this.getAuthenticatedUser(request),
-      );
-
+      const user: User = this.getAuthenticatedUser(request);
+      user.groups = await this.cognitoService.getUserGroups(user);
       return this.validatorService.validate(user, options);
     }
   }

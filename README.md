@@ -7,7 +7,7 @@
 ## Installation
 
 ```bash
-npm i @aws-sdk/client-cognito-identity-provider nestjs-cognito
+npm i --save nestjs-cognito
 ```
 
 ## Configuration
@@ -18,13 +18,10 @@ npm i @aws-sdk/client-cognito-identity-provider nestjs-cognito
 /**
  * @interface CognitoModuleOptions - Options for the CognitoModule
  * @property {string} region - The region
- * @property { accessKeyId: string, secretAccessKey: string, sessionToken: string } credentials - The AWS credentials
  * @property {string} userPoolId - The user pool ID
  */
 export type CognitoModuleOptions = CognitoIdentityProviderClientConfig &
-  Required<
-    Pick<CognitoIdentityProviderClientConfig, 'region' | 'credentials'>
-  > &
+  Required<Pick<CognitoIdentityProviderClientConfig, 'region'>> &
   Pick<UserPoolClientType, 'UserPoolId'>;
 
 /**
@@ -73,10 +70,6 @@ import { Module } from '@nestjs/common';
   imports: [
     CognitoModule.register({
       region: 'eu-west-X',
-      credentials: {
-        accessKeyId: 'XXXXXXXXXXXXXXXXMYFV5',
-        secretAccessKey: 'jhXXXXXXxxxxxXXXXXxxxXXXXxxxxxXXXXXTXNGI',
-      },
       UserPoolId: 'eu-west-X_XXXXXXX', // Optional, but is needed by Authorization
     }),
   ],
@@ -103,10 +96,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         region: configService.get('COGNITO_REGION'),
-        credentials: {
-          accessKeyId: configService.get<string>('COGNITO_ACCESS_KEY_ID'),
-          secretAccessKey: configService.get('COGNITO_SECRET_ACCESS_KEY'),
-        },
         UserPoolId: configService.get('COGNITO_USER_POOL_ID'), // Optional, but is needed by Authorization
       }),
       inject: [ConfigService],
@@ -118,15 +107,23 @@ export class AppModule {}
 
 ## Usage
 
-You can use the cognito identity provider injector or the built-in `nestjs-cognito` decorators and guards.
+You can use the cognito identity provider injectors or the built-in `nestjs-cognito` decorators and guards.
 
 ### Cognito Identity Provider
 
 ```ts
+import {
+  InjectCognitoIdentityProvider,
+  InjectCognitoIdentityProviderClient,
+  InjectCognitoUserPoolId,
+} from 'nestjs-cognito';
+
 export class MyService {
   constructor(
     @InjectCognitoIdentityProvider()
     private readonly client: CognitoIdentityProvider,
+    @InjectCognitoIdentityProviderClient()
+    private readonly cognitoIdentityProviderClient: CognitoIdentityProviderClient,
     @InjectCognitoUserPoolId()
     private readonly userPoolId: string,
   ) {}

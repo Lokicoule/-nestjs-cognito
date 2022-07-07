@@ -1,4 +1,7 @@
-import { CognitoIdentityProvider } from '@aws-sdk/client-cognito-identity-provider';
+import {
+  CognitoIdentityProvider,
+  CognitoIdentityProviderClient,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { Logger } from '@nestjs/common';
 import { CognitoModuleOptions } from '../cognito-module.options';
 
@@ -9,19 +12,29 @@ import { CognitoModuleOptions } from '../cognito-module.options';
  */
 export const getCognitoIdentityProviderValue = (
   cognitoModuleOptions: CognitoModuleOptions,
-) => {
-  const logger = new Logger(getCognitoIdentityProviderValue.name);
+): CognitoIdentityProvider => {
+  return new CognitoIdentityProvider(
+    getConfigurationFromOptions(
+      cognitoModuleOptions,
+      'CognitoIdentityProvider',
+    ),
+  );
+};
 
-  if (!Boolean(cognitoModuleOptions.region)) {
-    logger.error('Region is missing. ');
-  }
-  if (!Boolean(cognitoModuleOptions.credentials)) {
-    logger.error('Credentials are missing.');
-  }
-  return new CognitoIdentityProvider({
-    region: cognitoModuleOptions.region,
-    credentials: cognitoModuleOptions.credentials,
-  });
+/**
+ * Get the CognitoIdentityProviderClient instance
+ * @param {CognitoModuleOptions} options - The CognitoModuleOptions
+ * @returns {CognitoIdentityProviderClient} - The CognitoIdentityProviderClient instance
+ */
+export const getCognitoIdentityProviderClientValue = (
+  cognitoModuleOptions: CognitoModuleOptions,
+): CognitoIdentityProviderClient => {
+  return new CognitoIdentityProviderClient(
+    getConfigurationFromOptions(
+      cognitoModuleOptions,
+      'CognitoIdentityProviderClient',
+    ),
+  );
 };
 
 /**
@@ -41,3 +54,30 @@ export const getUserPoolIdProviderValue = (
   }
   return cognitoModuleOptions.UserPoolId || undefined;
 };
+
+/**
+ * Get the configuration from the CognitoModuleOptions
+ * @param {CognitoModuleOptions} options - The CognitoModuleOptions
+ * @param {string} from - The name from where the configuration is coming from
+ */
+function getConfigurationFromOptions(
+  cognitoModuleOptions: CognitoModuleOptions,
+  from: string,
+) {
+  const logger = new Logger(from);
+  const {
+    region,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    UserPoolId,
+    ...options
+  } = cognitoModuleOptions;
+
+  if (!Boolean(region)) {
+    logger.error('Region is missing. ');
+  }
+
+  return {
+    region: region,
+    ...options,
+  };
+}

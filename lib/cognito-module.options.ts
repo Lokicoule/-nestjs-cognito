@@ -7,13 +7,10 @@ import { ModuleMetadata, Provider, Type } from '@nestjs/common';
 /**
  * @interface CognitoModuleOptions - Options for the CognitoModule
  * @property {string} region - The region
- * @property { accessKeyId: string, secretAccessKey: string, sessionToken: string } credentials - The AWS credentials
  * @property {string} userPoolId - The user pool ID
  */
 export type CognitoModuleOptions = CognitoIdentityProviderClientConfig &
-  Required<
-    Pick<CognitoIdentityProviderClientConfig, 'region' | 'credentials'>
-  > &
+  Required<Pick<CognitoIdentityProviderClientConfig, 'region'>> &
   Pick<UserPoolClientType, 'UserPoolId'>;
 
 /**

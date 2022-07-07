@@ -1,9 +1,3 @@
-import {
-  AdminListGroupsForUserResponse,
-  AttributeType,
-  GetUserResponse,
-} from '@aws-sdk/client-cognito-identity-provider';
-
 export class User {
   private _groups: string[];
 
@@ -46,6 +40,14 @@ export class User {
   }
 
   /**
+   * Set the groups of the user and lowercase them to make them case insensitive
+   * @param {string[]} groups - The groups
+   */
+  public set groups(groups: string[]) {
+    this._groups = groups.map((group) => group.toLowerCase());
+  }
+
+  /**
    * Check if the user has a group
    * @param {string} group - The group
    * @returns {boolean} - True if the user has the group
@@ -73,39 +75,5 @@ export class User {
    */
   public hasAllGroups(groups: string[] = []): boolean {
     return groups.every((group) => this.hasGroup(group));
-  }
-
-  /**
-   * Add groups to the user
-   * @param {AdminListGroupsForUserResponse} response - The response from AdminListGroupsForUser
-   * @memberof User
-   * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_AdminListGroupsForUser.html
-   */
-  public addGroupsFromAdminListGroupsForUserResponse(
-    adminListGroupsForUserResponse: AdminListGroupsForUserResponse,
-  ): void {
-    if (Boolean(adminListGroupsForUserResponse.Groups)) {
-      this._groups = adminListGroupsForUserResponse.Groups.map((group) =>
-        group.GroupName.toLowerCase(),
-      );
-    }
-  }
-
-  /**
-   * Create a User from a GetUserResponse
-   * @static
-   * @param {GetUserResponse} response - The response from GetUser
-   * @returns {User} - The user
-   * @memberof User
-   * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_GetUser.html
-   * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_GetUser.html#API_GetUser_ResponseElements_UserAttributes
-   * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_GetUser.html#API_GetUser_ResponseElements_UserAttributes_AttributeType
-   */
-  public static fromGetUserResponse(user: GetUserResponse): User {
-    const { Username, UserAttributes } = user;
-    const email = UserAttributes.find(
-      (attribute: AttributeType) => attribute.Name === 'email',
-    )?.Value;
-    return new User(Username, email);
   }
 }
