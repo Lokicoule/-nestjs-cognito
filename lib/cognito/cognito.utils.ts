@@ -38,24 +38,6 @@ export const getCognitoIdentityProviderClientValue = (
 };
 
 /**
- * Get the UserPoolId
- * @param {CognitoModuleOptions} options - The CognitoModuleOptions
- * @returns {string} - The UserPoolId
- */
-export const getUserPoolIdProviderValue = (
-  cognitoModuleOptions: CognitoModuleOptions,
-) => {
-  const logger = new Logger(getUserPoolIdProviderValue.name);
-
-  if (!Boolean(cognitoModuleOptions.UserPoolId)) {
-    logger.warn(
-      'UserPoolId is missing, Authorization needs this property to work.',
-    );
-  }
-  return cognitoModuleOptions.UserPoolId || undefined;
-};
-
-/**
  * Get the configuration from the CognitoModuleOptions
  * @param {CognitoModuleOptions} options - The CognitoModuleOptions
  * @param {string} from - The name from where the configuration is coming from
@@ -68,12 +50,11 @@ function getConfigurationFromOptions(
   const {
     region,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    UserPoolId,
     ...options
   } = cognitoModuleOptions;
 
   if (!Boolean(region)) {
-    logger.error('Region is missing. ');
+    logger.warn('Region is missing. ');
   }
 
   return {

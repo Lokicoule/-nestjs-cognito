@@ -21,7 +21,6 @@ export abstract class AbstractGuard implements CanActivate {
    * Check if the user is authenticated
    * @param {ExecutionContext} context - The execution context
    * @returns {Promise<boolean>} - True or false if the user is authenticated or not and has the required roles
-   * @memberof AbstractGuard
    */
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = this.getRequest(context);
@@ -39,8 +38,6 @@ export abstract class AbstractGuard implements CanActivate {
    * Get the request from the execution context
    * @param {ExecutionContext} context - The execution context
    * @returns {Request} - The request
-   * @memberof AbstractGuard
-   * @abstract
    */
   public abstract getRequest(context: ExecutionContext): any;
 
@@ -48,7 +45,6 @@ export abstract class AbstractGuard implements CanActivate {
    * Get the authenticated user from the request
    * @param {Request} request - The request
    * @returns {User} - The user
-   * @memberof AbstractGuard
    * @throws {UnauthorizedException} - If the user is not found
    */
   public getAuthenticatedUser(request): User {
@@ -65,7 +61,6 @@ export abstract class AbstractGuard implements CanActivate {
    * Get the authorization token from the request
    * @param {Request} request - The request
    * @returns {string} - The authorization token
-   * @memberof AbstractGuard
    * @throws {UnauthorizedException} - If the authorization token is not found
    */
   private getAuthorizationToken(request): string {

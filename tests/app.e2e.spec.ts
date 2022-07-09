@@ -35,8 +35,8 @@ describe('Cognito Module', () => {
       await spec()
         .post('/login')
         .withBody({
-          username: config.get('COGNITO_USER_EMAIL_ADMIN'),
-          password: config.get('COGNITO_USER_PASSWORD_ADMIN'),
+          username: config.get('COGNITO_USER_EMAIL'),
+          password: config.get('COGNITO_USER_PASSWORD'),
         })
         .expectStatus(201)
         .stores('token', 'AccessToken');
@@ -59,6 +59,38 @@ describe('Cognito Module', () => {
         .get('/private')
         .withHeaders('Authorization', 'Bearer not-a-jwt')
         .expectStatus(401);
+    });
+  });
+
+  describe('Authorized Flow', () => {
+    it('should be able to log in and get a jwt, then hit the admin secret route', async () => {
+      await spec()
+        .post('/login')
+        .withBody({
+          username: config.get('COGNITO_USER_EMAIL_ADMIN'),
+          password: config.get('COGNITO_USER_PASSWORD_ADMIN'),
+        })
+        .expectStatus(201)
+        .stores('authorized-flow-token', 'AccessToken');
+      await spec()
+        .get('/admin')
+        .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
+        .expectBody({ message: 'Hello secure world!' });
+    });
+
+    it("should be able to log in and get a jwt, but can't hit the secret route", async () => {
+      await spec()
+        .post('/login')
+        .withBody({
+          username: config.get('COGNITO_USER_EMAIL'),
+          password: config.get('COGNITO_USER_PASSWORD'),
+        })
+        .expectStatus(201)
+        .stores('unauthorized-flow-token', 'AccessToken');
+      await spec()
+        .get('/admin')
+        .withHeaders('Authorization', 'Bearer $S{unauthorized-flow-token}')
+        .expectStatus(403);
     });
   });
 

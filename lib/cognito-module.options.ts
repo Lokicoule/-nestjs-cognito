@@ -1,17 +1,10 @@
-import {
-  CognitoIdentityProviderClientConfig,
-  UserPoolClientType,
-} from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoIdentityProviderClientConfig } from '@aws-sdk/client-cognito-identity-provider';
 import { ModuleMetadata, Provider, Type } from '@nestjs/common';
 
 /**
  * @interface CognitoModuleOptions - Options for the CognitoModule
- * @property {string} region - The region
- * @property {string} userPoolId - The user pool ID
  */
-export type CognitoModuleOptions = CognitoIdentityProviderClientConfig &
-  Required<Pick<CognitoIdentityProviderClientConfig, 'region'>> &
-  Pick<UserPoolClientType, 'UserPoolId'>;
+export type CognitoModuleOptions = CognitoIdentityProviderClientConfig;
 
 /**
  * @interface CognitoModuleOptionsFactory - Metadata for the CognitoModule

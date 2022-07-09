@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { AuthenticationGuard } from '../lib';
+import { AuthenticationGuard, AuthorizationGuard } from '../lib';
 
 import { AppService } from './app.service';
 
@@ -15,6 +15,19 @@ export class AppController {
   @Get('private')
   @UseGuards(AuthenticationGuard)
   getPrivateHello() {
+    console.debug('-----');
+    console.debug('----');
+    console.debug('----');
+    console.debug('getPrivateHello');
+    console.debug('-----');
+    console.debug('----');
+    console.debug('----');
+    return this.appService.getPrivateMessage();
+  }
+
+  @Get('admin')
+  @UseGuards(AuthorizationGuard(['admin']))
+  getAdminHello() {
     return this.appService.getPrivateMessage();
   }
 

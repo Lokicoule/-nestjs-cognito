@@ -1,4 +1,5 @@
-import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
+import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import {
   CognitoModuleAsyncOptions,
   CognitoModuleOptions,
@@ -8,18 +9,16 @@ import {
   COGNITO_CLIENT_INSTANCE_TOKEN,
   COGNITO_INSTANCE_TOKEN,
   COGNITO_MODULE_OPTIONS,
-  COGNITO_USER_POOL_ID,
 } from './cognito/cognito.constants';
 import { CognitoService } from './cognito/cognito.service';
 import {
   getCognitoIdentityProviderClientValue,
   getCognitoIdentityProviderValue,
-  getUserPoolIdProviderValue,
 } from './cognito/cognito.utils';
 import { ValidatorService } from './validators';
 
-@Global()
 @Module({
+  imports: [JwtModule.register({})],
   providers: [ValidatorService, CognitoService],
   exports: [ValidatorService, CognitoService],
 })
@@ -27,8 +26,6 @@ export class CognitoModule {
   /**
    * @param {CognitoModuleOptions} options - The CognitoModuleOptions
    * @returns {DynamicModule} - The CognitoModule
-   * @static
-   * @memberof CognitoModule
    */
   static register(options: CognitoModuleOptions): DynamicModule {
     return {
@@ -42,24 +39,14 @@ export class CognitoModule {
           provide: COGNITO_CLIENT_INSTANCE_TOKEN,
           useValue: getCognitoIdentityProviderClientValue(options),
         },
-        {
-          provide: COGNITO_USER_POOL_ID,
-          useValue: getUserPoolIdProviderValue(options),
-        },
       ],
-      exports: [
-        COGNITO_INSTANCE_TOKEN,
-        COGNITO_CLIENT_INSTANCE_TOKEN,
-        COGNITO_USER_POOL_ID,
-      ],
+      exports: [COGNITO_INSTANCE_TOKEN, COGNITO_CLIENT_INSTANCE_TOKEN],
     };
   }
 
   /**
    * @param {CognitoModuleAsyncOptions} options - The CognitoModuleAsyncOptions
    * @returns {DynamicModule} - The CognitoModule
-   * @static
-   * @memberof CognitoModule
    */
   static registerAsync(options: CognitoModuleAsyncOptions): DynamicModule {
     return {
@@ -77,27 +64,16 @@ export class CognitoModule {
           useFactory: getCognitoIdentityProviderClientValue,
           inject: [COGNITO_MODULE_OPTIONS],
         },
-        {
-          provide: COGNITO_USER_POOL_ID,
-          useFactory: getUserPoolIdProviderValue,
-          inject: [COGNITO_MODULE_OPTIONS],
-        },
+
         ...(options.extraProviders || []),
       ],
-      exports: [
-        COGNITO_INSTANCE_TOKEN,
-        COGNITO_CLIENT_INSTANCE_TOKEN,
-        COGNITO_USER_POOL_ID,
-      ],
+      exports: [COGNITO_INSTANCE_TOKEN, COGNITO_CLIENT_INSTANCE_TOKEN],
     };
   }
 
   /**
    * @param {CognitoModuleAsyncOptions} options - The CognitoModuleAsyncOptions
    * @returns {Provider[]} - The providers
-   * @private
-   * @static
-   * @memberof CognitoModule
    */
   private static createAsyncProviders(
     options: CognitoModuleAsyncOptions,
@@ -117,9 +93,6 @@ export class CognitoModule {
   /**
    * @param {CognitoModuleAsyncOptions} options - The CognitoModuleAsyncOptions
    * @returns {Provider} - The provider
-   * @private
-   * @static
-   * @memberof CognitoModule
    */
   private static createAsyncOptionsProvider(
     options: CognitoModuleAsyncOptions,

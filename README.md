@@ -1,4 +1,5 @@
 <h1 align="center">NestJS-Cognito</h1>
+[![Node.js CI](https://github.com/Lokicoule/nestjs-cognito/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/Lokicoule/nestjs-cognito/actions/workflows/node.js.yml)
 
 ## Description
 
@@ -18,11 +19,9 @@ npm i --save nestjs-cognito
 /**
  * @interface CognitoModuleOptions - Options for the CognitoModule
  * @property {string} region - The region
- * @property {string} userPoolId - The user pool ID
  */
 export type CognitoModuleOptions = CognitoIdentityProviderClientConfig &
-  Required<Pick<CognitoIdentityProviderClientConfig, 'region'>> &
-  Pick<UserPoolClientType, 'UserPoolId'>;
+  Required<Pick<CognitoIdentityProviderClientConfig, 'region'>>;
 
 /**
  * @interface CognitoModuleOptionsFactory - Metadata for the CognitoModule
@@ -70,7 +69,6 @@ import { Module } from '@nestjs/common';
   imports: [
     CognitoModule.register({
       region: 'eu-west-X',
-      UserPoolId: 'eu-west-X_XXXXXXX', // Optional, but is needed by Authorization
     }),
   ],
 })
@@ -96,7 +94,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         region: configService.get('COGNITO_REGION'),
-        UserPoolId: configService.get('COGNITO_USER_POOL_ID'), // Optional, but is needed by Authorization
       }),
       inject: [ConfigService],
     }),
@@ -115,7 +112,6 @@ You can use the cognito identity provider injectors or the built-in `nestjs-cogn
 import {
   InjectCognitoIdentityProvider,
   InjectCognitoIdentityProviderClient,
-  InjectCognitoUserPoolId,
 } from 'nestjs-cognito';
 
 export class MyService {
@@ -124,8 +120,6 @@ export class MyService {
     private readonly client: CognitoIdentityProvider,
     @InjectCognitoIdentityProviderClient()
     private readonly cognitoIdentityProviderClient: CognitoIdentityProviderClient,
-    @InjectCognitoUserPoolId()
-    private readonly userPoolId: string,
   ) {}
 }
 ```

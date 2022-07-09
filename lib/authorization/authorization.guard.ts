@@ -21,14 +21,13 @@ export const createAuthorizationGuard = (
     /**
      * @param context - The execution context
      * @returns {boolean} - True if the user has roles which respect the options
-     * @memberof AuthorizationGuard
      */
     public async canActivate(context: ExecutionContext) {
       await super.canActivate(context);
 
       const request = this.getRequest(context);
       const user: User = this.getAuthenticatedUser(request);
-      user.groups = await this.cognitoService.getUserGroups(user);
+
       return this.validatorService.validate(user, options);
     }
   }

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UserBuilder } from '../user/user.builder';
 import { User } from '../user/user.model';
 import { ValidatorService } from './validator.service';
 
@@ -23,14 +24,19 @@ describe('ValidatorService', () => {
     });
 
     it('should be truthy, there is no options', () => {
-      const user: User = new User('username', 'email');
-
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .build();
       expect(service.validate(user)).toBeTruthy();
     });
 
     it('should be truthy, user has allowed groups', () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['admin', 'user'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['Admin', 'User'])
+        .build();
       const options = {
         allowedGroups: ['admin'],
       };
@@ -38,15 +44,21 @@ describe('ValidatorService', () => {
     });
 
     it('should be truthy, user has implicit allowed groups', () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['admin', 'user'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['Admin', 'User'])
+        .build();
       expect(service.validate(user, ['User'])).toBeTruthy();
       expect(service.validate(user, ['Admin'])).toBeTruthy();
     });
 
     it("should be truthy, user doesn't have prohibited groups and has allowed groups", () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['admin', 'moderator'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['Admin', 'moderator'])
+        .build();
       const options = {
         allowedGroups: ['Admin'],
         prohibitedGroups: ['User'],
@@ -55,8 +67,11 @@ describe('ValidatorService', () => {
     });
 
     it('should be truthy, user has required groups', () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['admin', 'user'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['Admin', 'User'])
+        .build();
       const options = {
         requiredGroups: ['Admin', 'User'],
         allowedGroups: ['Moderator'],
@@ -65,8 +80,11 @@ describe('ValidatorService', () => {
     });
 
     it("should be falsy, user doesn't have required groups", () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['moderator', 'user'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['moderator', 'User'])
+        .build();
       const options = {
         requiredGroups: ['Admin'],
         allowedGroups: ['Admin', 'Moderator'],
@@ -75,8 +93,11 @@ describe('ValidatorService', () => {
     });
 
     it('should be falsy, user has prohibited group', () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['admin', 'user'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['Admin', 'User'])
+        .build();
       const options = {
         requiredGroups: ['Admin', 'user'],
         prohibitedGroups: ['Admin'],
@@ -85,8 +106,11 @@ describe('ValidatorService', () => {
     });
 
     it("should be truthy, user doesn't have prohibited group", () => {
-      const user: User = new User('username', 'email');
-      user.groups = ['admin', 'user'];
+      const user: User = new UserBuilder()
+        .setUsername('username')
+        .setEmail('email')
+        .setGroups(['Admin', 'User'])
+        .build();
       const options = {
         prohibitedGroups: ['Moderator'],
       };

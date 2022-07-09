@@ -7,7 +7,6 @@ export class AuthenticationGuard extends AbstractGuard {
    * Get the request from the context
    * @param {ExecutionContext} context - The context
    * @returns {Request} - The request
-   * @memberof AuthenticationGuard
    */
   public getRequest(context: ExecutionContext) {
     return context.switchToHttp().getRequest();

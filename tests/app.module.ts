@@ -11,7 +11,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule.forRoot()],
       useFactory: async (configService: ConfigService) => ({
         region: configService.get('COGNITO_REGION'),
-        UserPoolId: configService.get('COGNITO_USER_POOL_ID'),
       }),
       inject: [ConfigService],
     }),

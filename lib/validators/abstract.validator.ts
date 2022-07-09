@@ -12,7 +12,6 @@ export abstract class AbstractValidator implements Validator {
   /**
    * @param {Validator} nextValidator - The next validator in the chain
    * @returns {Validator} - The next validator in the chain
-   * @memberof AbstractValidator
    */
   public setNext(validator: Validator): Validator {
     this._nextValidator = validator;
@@ -23,7 +22,6 @@ export abstract class AbstractValidator implements Validator {
    * @param {User} user - The user to validate
    * @param {AuthorizationOptions} [options] - The options to validate the user with
    * @returns {boolean} - The result of the validation process (true if the user is valid)
-   * @memberof AbstractValidator
    */
   public validate(user: User, options?: AuthorizationOptions): boolean {
     return Boolean(this._nextValidator)
