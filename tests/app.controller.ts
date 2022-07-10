@@ -8,20 +8,12 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   @Get('public')
   getHello() {
-    console.log('getHello');
     return this.appService.getHello();
   }
 
   @Get('private')
   @UseGuards(AuthenticationGuard)
   getPrivateHello() {
-    console.debug('-----');
-    console.debug('----');
-    console.debug('----');
-    console.debug('getPrivateHello');
-    console.debug('-----');
-    console.debug('----');
-    console.debug('----');
     return this.appService.getPrivateMessage();
   }
 
