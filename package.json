@@ -58,6 +58,7 @@
     "husky": "^8.0.1",
     "jest": "^27.0.6",
     "lint-staged": "^13.0.3",
+    "nyc": "^15.1.0",
     "pactum": "^3.1.11",
     "prettier": "^2.3.2",
     "reflect-metadata": "^0.1.13",
@@ -83,7 +84,8 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "lib/**/*.(t|j)s",
+      "!**/**/index.(t|j)s"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"

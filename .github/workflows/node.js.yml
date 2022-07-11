@@ -16,6 +16,7 @@ env:
   COGNITO_USER_EMAIL_ADMIN: ${{ secrets.COGNITO_USER_EMAIL_ADMIN }}
   COGNITO_USER_PASSWORD: ${{ secrets.COGNITO_USER_PASSWORD }}
   COGNITO_USER_PASSWORD_ADMIN: ${{ secrets.COGNITO_USER_PASSWORD_ADMIN }}
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
 jobs:
   build:
@@ -40,8 +41,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: make test-coverage
-        run: make test-coverage
+      - name: Tests coverage
+        run: npm run coverage
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
