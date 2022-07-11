@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build": "rimraf -rf dist && tsc -p tsconfig.json",
+    "coverage": "jest --coverage && coveralls < coverage/lcov.info",
     "format": "prettier --write \"{lib,tests}/**/*.ts\"",
     "lint": "eslint 'lib/**/*.ts' --fix",
     "prepublish:next": "npm run build",
@@ -50,6 +51,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
+    "coveralls": "^3.1.1",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
