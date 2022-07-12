@@ -5,18 +5,18 @@ import { AllowedGroupsValidator } from './validators/allowed-groups.validator';
 import { ProhibitedGroupsValidator } from './validators/prohibited-groups.validator';
 import { RequiredGroupsValidator } from './validators/required-groups.validator';
 
-export const DEFAULT_AUTHORIZATION_VALIDATION =
-  'DEFAULT_AUTHORIZATION_VALIDATION';
-export const STRICT_AUTHORIZATION_VALIDATION =
-  'STRICT_AUTHORIZATION_VALIDATION';
+const DEFAULT_AUTHORIZATION_VALIDATION = 'DEFAULT_AUTHORIZATION_VALIDATION';
+const STRICT_AUTHORIZATION_VALIDATION = 'STRICT_AUTHORIZATION_VALIDATION';
 
 export const AuthorizationValidator = {
   DEFAULT_AUTHORIZATION_VALIDATION: ValidatorChainBuilder.create()
     .with(new AllowedGroupsValidator())
-    .with(new ProhibitedGroupsValidator()).first,
+    .with(new ProhibitedGroupsValidator())
+    .build(),
   STRICT_AUTHORIZATION_VALIDATION: ValidatorChainBuilder.create()
     .with(new ProhibitedGroupsValidator())
-    .with(new RequiredGroupsValidator()).first,
+    .with(new RequiredGroupsValidator())
+    .build(),
 
   /**
    * Creates a new authorization validator.

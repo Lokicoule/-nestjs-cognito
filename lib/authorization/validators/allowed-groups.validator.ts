@@ -3,7 +3,7 @@ import { User } from '../../user/user.model';
 import { AbstractValidator } from '../../validators/abstract.validator';
 
 export class AllowedGroupsValidator extends AbstractValidator {
-  public validate(user: User, options: AuthorizationOptions): boolean {
+  public onValidate(user: User, options: AuthorizationOptions): boolean {
     const allowedGroups = Array.isArray(options)
       ? options
       : options.allowedGroups;
@@ -11,6 +11,6 @@ export class AllowedGroupsValidator extends AbstractValidator {
     if (Boolean(allowedGroups) && !user.hasSomeGroup(allowedGroups)) {
       return false;
     }
-    return super.validate(user, options);
+    return true;
   }
 }
