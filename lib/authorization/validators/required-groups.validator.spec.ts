@@ -14,6 +14,7 @@ describe('RequiredGroupsValidator', () => {
     const options = {
       requiredGroups: ['Admin', 'User'],
     };
+    expect(requiredGroupsValidator.onValidate(user, options)).toBeTruthy();
     expect(requiredGroupsValidator.validate(user, options)).toBeTruthy();
   });
 
@@ -28,6 +29,7 @@ describe('RequiredGroupsValidator', () => {
     const options = {
       requiredGroups: ['Admin', 'User'],
     };
+    expect(requiredGroupsValidator.onValidate(user, options)).toBeFalsy();
     expect(requiredGroupsValidator.validate(user, options)).toBeFalsy();
   });
 
@@ -39,6 +41,7 @@ describe('RequiredGroupsValidator', () => {
       .setGroups(['moderator', 'User'])
       .build();
 
+    expect(requiredGroupsValidator.onValidate(user, {})).toBeTruthy();
     expect(requiredGroupsValidator.validate(user, {})).toBeTruthy();
   });
 });

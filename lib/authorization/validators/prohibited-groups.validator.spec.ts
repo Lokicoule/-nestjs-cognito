@@ -14,6 +14,7 @@ describe('ProhibitedGroupsValidator', () => {
     const options = {
       prohibitedGroups: ['Admin'],
     };
+    expect(prohibitedGroupsValidator.onValidate(user, options)).toBeTruthy();
     expect(prohibitedGroupsValidator.validate(user, options)).toBeTruthy();
   });
   it('should be falsy, user has Admin group', () => {
@@ -27,6 +28,7 @@ describe('ProhibitedGroupsValidator', () => {
     const options = {
       prohibitedGroups: ['Admin'],
     };
+    expect(prohibitedGroupsValidator.onValidate(user, options)).toBeFalsy();
     expect(prohibitedGroupsValidator.validate(user, options)).toBeFalsy();
   });
 
@@ -38,6 +40,7 @@ describe('ProhibitedGroupsValidator', () => {
       .setGroups(['Moderator', 'User'])
       .build();
 
+    expect(prohibitedGroupsValidator.onValidate(user, {})).toBeTruthy();
     expect(prohibitedGroupsValidator.validate(user, {})).toBeTruthy();
   });
 });

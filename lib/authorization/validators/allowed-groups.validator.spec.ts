@@ -14,6 +14,7 @@ describe('AllowedGroupsValidator', () => {
     const options = {
       allowedGroups: ['Admin'],
     };
+    expect(allowedGroupsValidator.onValidate(user, options)).toBeTruthy();
     expect(allowedGroupsValidator.validate(user, options)).toBeTruthy();
   });
 
@@ -28,6 +29,7 @@ describe('AllowedGroupsValidator', () => {
     const options = {
       allowedGroups: ['Admin'],
     };
+    expect(allowedGroupsValidator.onValidate(user, options)).toBeFalsy();
     expect(allowedGroupsValidator.validate(user, options)).toBeFalsy();
   });
 
@@ -39,6 +41,7 @@ describe('AllowedGroupsValidator', () => {
       .setGroups(['Moderator', 'User'])
       .build();
 
+    expect(allowedGroupsValidator.onValidate(user, ['User'])).toBeTruthy();
     expect(allowedGroupsValidator.validate(user, ['User'])).toBeTruthy();
   });
 
@@ -49,6 +52,7 @@ describe('AllowedGroupsValidator', () => {
       .setEmail('email')
       .build();
 
+    expect(allowedGroupsValidator.onValidate(user, {})).toBeTruthy();
     expect(allowedGroupsValidator.validate(user, {})).toBeTruthy();
   });
 });

@@ -9,12 +9,14 @@ describe('AuthenticatedUserValidator', () => {
       .setEmail('email')
       .build();
 
+    expect(validator.onValidate(user)).toBeTruthy();
     expect(validator.validate(user)).toBeTruthy();
   });
 
   it('should be falsy', () => {
     const validator = new AuthenticatedUserValidator();
 
+    expect(validator.onValidate(undefined)).toBeFalsy();
     expect(validator.validate(undefined)).toBeFalsy();
   });
 });
