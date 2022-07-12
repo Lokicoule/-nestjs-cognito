@@ -1,6 +1,6 @@
-import { AllowedGroupsValidator } from './allowed-groups.validator';
-import { User } from '../../user/user.model';
 import { UserBuilder } from '../../user/user.builder';
+import { User } from '../../user/user.model';
+import { AllowedGroupsValidator } from './allowed-groups.validator';
 
 describe('AllowedGroupsValidator', () => {
   it('should be truthy, user has Admin group', () => {

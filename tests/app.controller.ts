@@ -4,6 +4,8 @@ import {
   AuthenticationGuard,
   Authorization,
   AuthorizationGuard,
+  CurrentUser,
+  User,
 } from '../lib';
 
 import { AppService } from './app.service';
@@ -18,14 +20,14 @@ export class AppController {
 
   @Get('private')
   @UseGuards(AuthenticationGuard)
-  getPrivateHello() {
-    return this.appService.getPrivateMessage();
+  getPrivateHello(@CurrentUser() me: User) {
+    return this.appService.getPrivateMessage(me);
   }
 
   @Get('admin')
   @UseGuards(AuthorizationGuard(['admin']))
-  getAdminHello() {
-    return this.appService.getPrivateMessage();
+  getAdminHello(@CurrentUser() me: User) {
+    return this.appService.getPrivateMessage(me);
   }
 
   @Get('no-admin')
@@ -34,8 +36,8 @@ export class AppController {
       prohibitedGroups: ['admin'],
     }),
   )
-  getNoAdminHello() {
-    return this.appService.getPrivateMessage();
+  getNoAdminHello(@CurrentUser() me: User) {
+    return this.appService.getPrivateMessage(me);
   }
 
   @Post('login')
@@ -52,8 +54,8 @@ export class AppController {
 export class AppWithAuthenticationDecoratorController {
   constructor(private readonly appService: AppService) {}
   @Get('authentication-decorator')
-  getAdminHello() {
-    return this.appService.getPrivateMessage();
+  getAdminHello(@CurrentUser() me: User) {
+    return this.appService.getPrivateMessage(me);
   }
 }
 
@@ -64,7 +66,7 @@ export class AppWithAuthenticationDecoratorController {
 export class AppWithAuthorizationDecoratorController {
   constructor(private readonly appService: AppService) {}
   @Get('authorization-decorator')
-  getAdminHello() {
-    return this.appService.getPrivateMessage();
+  getAdminHello(@CurrentUser() me: User) {
+    return this.appService.getPrivateMessage(me);
   }
 }

@@ -2,20 +2,13 @@ import {
   CognitoIdentityProvider,
   GetUserResponse,
 } from '@aws-sdk/client-cognito-identity-provider';
+import { UnauthorizedException } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserBuilder } from '../user/user.builder';
-import { User } from '../user/user.model';
+import { COGNITO_INSTANCE_TOKEN } from './cognito.constants';
 import { CognitoService } from './cognito.service';
-import { JwtModule } from '@nestjs/jwt';
-import {
-  COGNITO_CLIENT_INSTANCE_TOKEN,
-  COGNITO_INSTANCE_TOKEN,
-} from './cognito.constants';
-import {
-  getCognitoIdentityProviderClientInstance,
-  getCognitoIdentityProviderInstance,
-} from './cognito.utils';
-import { UnauthorizedException } from '@nestjs/common';
+import { getCognitoIdentityProviderInstance } from './cognito.utils';
 
 describe('CognitoService', () => {
   let service: CognitoService;
@@ -78,7 +71,9 @@ describe('CognitoService', () => {
       };
       jest.spyOn(client, 'getUser').mockImplementation(() => result);
 
-      expect(async () => await service.getUser('dededed')).rejects.toThrowError(
+      expect(
+        async () => await service.getUser('this is not an access token'),
+      ).rejects.toThrowError(
         new UnauthorizedException('Invalid access token.'),
       );
     });

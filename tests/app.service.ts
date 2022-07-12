@@ -5,8 +5,9 @@ import {
   RespondToAuthChallengeCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectCognitoIdentityProvider } from '../lib/cognito/cognito.decorators';
 import { ConfigService } from '@nestjs/config';
+import { InjectCognitoIdentityProvider } from '../lib/cognito/cognito.decorators';
+import { User } from '../lib/user/user.model';
 
 @Injectable()
 export class AppService {
@@ -28,8 +29,8 @@ export class AppService {
    * Get hello world message.
    * @returns {string}
    */
-  getPrivateMessage() {
-    return { message: 'Hello secure world!' };
+  getPrivateMessage(me: User) {
+    return { message: `Hello ${me.email}` };
   }
 
   /**

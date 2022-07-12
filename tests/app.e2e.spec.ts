@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 describe('Cognito Module', () => {
   let app: INestApplication;
   let config: ConfigService;
+
   beforeAll(async () => {
     const modRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -30,8 +31,8 @@ describe('Cognito Module', () => {
     });
   });
 
-  describe('Authenticated flow', () => {
-    it("should be able to log in and get a jwt, but does't have a group", async () => {
+  describe('Authenticated flow: user without group', () => {
+    it("should be able to log in and get a jwt and can access to authenticated routes and protected one 'no-admin'", async () => {
       await spec()
         .post('/login')
         .withBody({
@@ -43,11 +44,11 @@ describe('Cognito Module', () => {
       await spec()
         .get('/private')
         .withHeaders('Authorization', 'Bearer $S{token}')
-        .expectBody({ message: 'Hello secure world!' });
+        .expectBody({ message: 'Hello ' + config.get('COGNITO_USER_EMAIL') });
       await spec()
         .get('/authentication-decorator')
         .withHeaders('Authorization', 'Bearer $S{token}')
-        .expectBody({ message: 'Hello secure world!' });
+        .expectBody({ message: 'Hello ' + config.get('COGNITO_USER_EMAIL') });
       await spec()
         .get('/admin')
         .withHeaders('Authorization', 'Bearer $S{token}')
@@ -59,27 +60,12 @@ describe('Cognito Module', () => {
       await spec()
         .get('/no-admin')
         .withHeaders('Authorization', 'Bearer $S{token}')
-        .expectBody({ message: 'Hello secure world!' });
+        .expectBody({ message: 'Hello ' + config.get('COGNITO_USER_EMAIL') });
     });
   });
 
-  describe('UnauthenticatedFlow', () => {
-    it('should return a 401 for an invalid login', async () => {
-      await spec()
-        .post('/login')
-        .withBody({ username: 'test1', password: 'not the right password' })
-        .expectStatus(401);
-    });
-    it('should return a 401 for an invalid JWT', async () => {
-      await spec()
-        .get('/private')
-        .withHeaders('Authorization', 'Bearer not-a-jwt')
-        .expectStatus(401);
-    });
-  });
-
-  describe('Authorized Flow', () => {
-    it('should be able to log in and get a jwt, and has admin group', async () => {
+  describe('Authorized Flow: user with admin group', () => {
+    it("should be able to log in and get a jwt, and can access to protected routes except 'no-admin'", async () => {
       await spec()
         .post('/login')
         .withBody({
@@ -91,15 +77,34 @@ describe('Cognito Module', () => {
       await spec()
         .get('/admin')
         .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
-        .expectBody({ message: 'Hello secure world!' });
+        .expectBody({
+          message: 'Hello ' + config.get('COGNITO_USER_EMAIL_ADMIN'),
+        });
       await spec()
         .get('/authorization-decorator')
         .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
-        .expectBody({ message: 'Hello secure world!' });
+        .expectBody({
+          message: 'Hello ' + config.get('COGNITO_USER_EMAIL_ADMIN'),
+        });
       await spec()
         .get('/no-admin')
         .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
         .expectStatus(403);
+    });
+  });
+
+  describe('Unauthenticated flow', () => {
+    it('should return a 401 for an invalid login', async () => {
+      await spec()
+        .post('/login')
+        .withBody({ username: 'test1', password: 'not the right password' })
+        .expectStatus(401);
+    });
+    it('should return a 401 for an invalid JWT', async () => {
+      await spec()
+        .get('/private')
+        .withHeaders('Authorization', 'Bearer not-a-jwt')
+        .expectStatus(401);
     });
   });
 

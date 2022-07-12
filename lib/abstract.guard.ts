@@ -8,14 +8,10 @@ import {
 import { CognitoService } from './cognito/cognito.service';
 import { COGNITO_USER_CONTEXT_PROPERTY } from './user/user.constants';
 import { User } from './user/user.model';
-import { ValidatorService } from './validators/validator.service';
 
 @Injectable()
 export abstract class AbstractGuard implements CanActivate {
-  constructor(
-    protected readonly cognitoService: CognitoService,
-    protected readonly validatorService: ValidatorService,
-  ) {}
+  constructor(protected readonly cognitoService: CognitoService) {}
 
   /**
    * Check if the user is authenticated
@@ -29,10 +25,15 @@ export abstract class AbstractGuard implements CanActivate {
 
     request[COGNITO_USER_CONTEXT_PROPERTY] = user;
 
-    return this.validatorService.validate(
-      request[COGNITO_USER_CONTEXT_PROPERTY],
-    );
+    return this.onValidate(this.getAuthenticatedUser(request));
   }
+
+  /**
+   * Validate the user
+   * @param {User} user - The user
+   * @returns {boolean} - True if the user is authenticated
+   */
+  public abstract onValidate(user: User): boolean;
 
   /**
    * Get the request from the execution context

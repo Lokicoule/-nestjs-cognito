@@ -15,12 +15,11 @@ import {
   getCognitoIdentityProviderClientInstance,
   getCognitoIdentityProviderInstance,
 } from './cognito/cognito.utils';
-import { ValidatorService } from './validators';
 
 @Module({
   imports: [JwtModule.register({})],
-  providers: [ValidatorService, CognitoService],
-  exports: [ValidatorService, CognitoService],
+  providers: [CognitoService],
+  exports: [CognitoService],
 })
 export class CognitoModule {
   /**

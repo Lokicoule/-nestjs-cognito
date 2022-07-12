@@ -44,4 +44,19 @@ describe('RequiredGroupsValidator', () => {
     expect(requiredGroupsValidator.onValidate(user, {})).toBeTruthy();
     expect(requiredGroupsValidator.validate(user, {})).toBeTruthy();
   });
+
+  it('should be falsy, user has Admin and User group', () => {
+    const requiredGroupsValidator = new RequiredGroupsValidator();
+    const user: User = new UserBuilder()
+      .setUsername('username')
+      .setEmail('email')
+      .setGroups(['Admin', 'User'])
+      .build();
+
+    const options = {
+      requiredGroups: ['Admin', 'User', 'Moderator'],
+    };
+    expect(requiredGroupsValidator.onValidate(user, options)).toBeFalsy();
+    expect(requiredGroupsValidator.validate(user, options)).toBeFalsy();
+  });
 });
