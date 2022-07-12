@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { AuthenticationGuard, AuthorizationGuard } from '../lib';
+import {
+  Authentication,
+  AuthenticationGuard,
+  Authorization,
+  AuthorizationGuard,
+} from '../lib';
 
 import { AppService } from './app.service';
 
@@ -23,11 +28,43 @@ export class AppController {
     return this.appService.getPrivateMessage();
   }
 
+  @Get('no-admin')
+  @UseGuards(
+    AuthorizationGuard({
+      prohibitedGroups: ['admin'],
+    }),
+  )
+  getNoAdminHello() {
+    return this.appService.getPrivateMessage();
+  }
+
   @Post('login')
   login(@Body() body: Record<string, string>) {
     return this.appService.getAccessToken({
       username: body.username,
       password: body.password,
     });
+  }
+}
+
+@Controller()
+@Authentication()
+export class AppWithAuthenticationDecoratorController {
+  constructor(private readonly appService: AppService) {}
+  @Get('authentication-decorator')
+  getAdminHello() {
+    return this.appService.getPrivateMessage();
+  }
+}
+
+@Controller()
+@Authorization({
+  allowedGroups: ['admin'],
+})
+export class AppWithAuthorizationDecoratorController {
+  constructor(private readonly appService: AppService) {}
+  @Get('authorization-decorator')
+  getAdminHello() {
+    return this.appService.getPrivateMessage();
   }
 }

@@ -31,7 +31,7 @@ describe('Cognito Module', () => {
   });
 
   describe('Authenticated flow', () => {
-    it('should be able to log in and get a jwt, then hit the secret route', async () => {
+    it("should be able to log in and get a jwt, but does't have a group", async () => {
       await spec()
         .post('/login')
         .withBody({
@@ -42,6 +42,22 @@ describe('Cognito Module', () => {
         .stores('token', 'AccessToken');
       await spec()
         .get('/private')
+        .withHeaders('Authorization', 'Bearer $S{token}')
+        .expectBody({ message: 'Hello secure world!' });
+      await spec()
+        .get('/authentication-decorator')
+        .withHeaders('Authorization', 'Bearer $S{token}')
+        .expectBody({ message: 'Hello secure world!' });
+      await spec()
+        .get('/admin')
+        .withHeaders('Authorization', 'Bearer $S{token}')
+        .expectStatus(403);
+      await spec()
+        .get('/authorization-decorator')
+        .withHeaders('Authorization', 'Bearer $S{token}')
+        .expectStatus(403);
+      await spec()
+        .get('/no-admin')
         .withHeaders('Authorization', 'Bearer $S{token}')
         .expectBody({ message: 'Hello secure world!' });
     });
@@ -63,7 +79,7 @@ describe('Cognito Module', () => {
   });
 
   describe('Authorized Flow', () => {
-    it('should be able to log in and get a jwt, then hit the admin secret route', async () => {
+    it('should be able to log in and get a jwt, and has admin group', async () => {
       await spec()
         .post('/login')
         .withBody({
@@ -76,20 +92,13 @@ describe('Cognito Module', () => {
         .get('/admin')
         .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
         .expectBody({ message: 'Hello secure world!' });
-    });
-
-    it("should be able to log in and get a jwt, but can't hit the secret route", async () => {
       await spec()
-        .post('/login')
-        .withBody({
-          username: config.get('COGNITO_USER_EMAIL'),
-          password: config.get('COGNITO_USER_PASSWORD'),
-        })
-        .expectStatus(201)
-        .stores('unauthorized-flow-token', 'AccessToken');
+        .get('/authorization-decorator')
+        .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
+        .expectBody({ message: 'Hello secure world!' });
       await spec()
-        .get('/admin')
-        .withHeaders('Authorization', 'Bearer $S{unauthorized-flow-token}')
+        .get('/no-admin')
+        .withHeaders('Authorization', 'Bearer $S{authorized-flow-token}')
         .expectStatus(403);
     });
   });

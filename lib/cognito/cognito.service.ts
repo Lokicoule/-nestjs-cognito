@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/user.model';
 import { InjectCognitoIdentityProvider } from './cognito.decorators';
 import { UserMapper } from './mappers/user.mapper';
+
 @Injectable()
 export class CognitoService {
   /**
@@ -35,12 +36,25 @@ export class CognitoService {
         AccessToken: accessToken,
       };
       const response: GetUserResponse = await this.client.getUser(request);
-      return UserMapper.fromGetUserAndDecodedJwt(
-        response,
-        this.jwtService.decode(accessToken),
-      );
+      const decodedAccessToken = this.decodeAccessToken(accessToken);
+      return UserMapper.fromGetUserAndDecodedJwt(response, decodedAccessToken);
     } catch (error) {
-      throw new UnauthorizedException(error, 'Invalid access token.');
+      throw new UnauthorizedException(error, 'Authentication failed.');
     }
+  }
+
+  /**
+   * Decode the access token
+   * @param {string} accessToken - The access token
+   * @returns {object} - The decoded access token
+   * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_DecodeJWT.html
+   * @throws {UnauthorizedException} - This use case should not happen, but if it does, it's a bad token
+   */
+  private decodeAccessToken(accessToken: string): any {
+    const decodedAccessToken = this.jwtService.decode(accessToken);
+    if (!Boolean(decodedAccessToken)) {
+      throw new UnauthorizedException('Invalid access token.');
+    }
+    return decodedAccessToken;
   }
 }

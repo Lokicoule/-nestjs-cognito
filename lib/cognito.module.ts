@@ -12,8 +12,8 @@ import {
 } from './cognito/cognito.constants';
 import { CognitoService } from './cognito/cognito.service';
 import {
-  getCognitoIdentityProviderClientValue,
-  getCognitoIdentityProviderValue,
+  getCognitoIdentityProviderClientInstance,
+  getCognitoIdentityProviderInstance,
 } from './cognito/cognito.utils';
 import { ValidatorService } from './validators';
 
@@ -33,11 +33,11 @@ export class CognitoModule {
       providers: [
         {
           provide: COGNITO_INSTANCE_TOKEN,
-          useValue: getCognitoIdentityProviderValue(options),
+          useValue: getCognitoIdentityProviderInstance(options),
         },
         {
           provide: COGNITO_CLIENT_INSTANCE_TOKEN,
-          useValue: getCognitoIdentityProviderClientValue(options),
+          useValue: getCognitoIdentityProviderClientInstance(options),
         },
       ],
       exports: [COGNITO_INSTANCE_TOKEN, COGNITO_CLIENT_INSTANCE_TOKEN],
@@ -56,12 +56,12 @@ export class CognitoModule {
         ...this.createAsyncProviders(options),
         {
           provide: COGNITO_INSTANCE_TOKEN,
-          useFactory: getCognitoIdentityProviderValue,
+          useFactory: getCognitoIdentityProviderInstance,
           inject: [COGNITO_MODULE_OPTIONS],
         },
         {
           provide: COGNITO_CLIENT_INSTANCE_TOKEN,
-          useFactory: getCognitoIdentityProviderClientValue,
+          useFactory: getCognitoIdentityProviderClientInstance,
           inject: [COGNITO_MODULE_OPTIONS],
         },
 

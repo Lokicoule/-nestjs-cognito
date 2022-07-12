@@ -10,7 +10,7 @@ import { CognitoModuleOptions } from '../cognito-module.options';
  * @param {CognitoModuleOptions} options - The CognitoModuleOptions
  * @returns {CognitoIdentityProvider} - The CognitoIdentityProvider instance
  */
-export const getCognitoIdentityProviderValue = (
+export const getCognitoIdentityProviderInstance = (
   cognitoModuleOptions: CognitoModuleOptions,
 ): CognitoIdentityProvider => {
   return new CognitoIdentityProvider(
@@ -26,7 +26,7 @@ export const getCognitoIdentityProviderValue = (
  * @param {CognitoModuleOptions} options - The CognitoModuleOptions
  * @returns {CognitoIdentityProviderClient} - The CognitoIdentityProviderClient instance
  */
-export const getCognitoIdentityProviderClientValue = (
+export const getCognitoIdentityProviderClientInstance = (
   cognitoModuleOptions: CognitoModuleOptions,
 ): CognitoIdentityProviderClient => {
   return new CognitoIdentityProviderClient(
@@ -47,11 +47,7 @@ function getConfigurationFromOptions(
   from: string,
 ) {
   const logger = new Logger(from);
-  const {
-    region,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ...options
-  } = cognitoModuleOptions;
+  const { region, ...options } = cognitoModuleOptions;
 
   if (!Boolean(region)) {
     logger.warn('Region is missing. ');

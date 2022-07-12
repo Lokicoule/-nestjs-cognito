@@ -1,11 +1,19 @@
 import { Module } from '@nestjs/common';
 import { CognitoModule } from '../lib/cognito.module';
-import { AppController } from './app.controller';
+import {
+  AppController,
+  AppWithAuthenticationDecoratorController,
+  AppWithAuthorizationDecoratorController,
+} from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  controllers: [AppController],
+  controllers: [
+    AppController,
+    AppWithAuthenticationDecoratorController,
+    AppWithAuthorizationDecoratorController,
+  ],
   imports: [
     CognitoModule.registerAsync({
       imports: [ConfigModule.forRoot()],

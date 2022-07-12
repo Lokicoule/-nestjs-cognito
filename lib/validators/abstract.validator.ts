@@ -23,7 +23,7 @@ export abstract class AbstractValidator implements Validator {
    * @param {AuthorizationOptions} [options] - The options to validate the user with
    * @returns {boolean} - The result of the validation process (true if the user is valid)
    */
-  public validate(user: User, options?: AuthorizationOptions): boolean {
+  public validate(user?: User, options?: AuthorizationOptions): boolean {
     return Boolean(this._nextValidator)
       ? this._nextValidator.validate(user, options)
       : true;

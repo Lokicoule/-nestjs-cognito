@@ -11,4 +11,10 @@ describe('AuthenticatedUserValidator', () => {
 
     expect(validator.validate(user)).toBeTruthy();
   });
+
+  it('should be falsy', () => {
+    const validator = new AuthenticatedUserValidator();
+
+    expect(validator.validate(undefined)).toBeFalsy();
+  });
 });
