@@ -30,6 +30,7 @@ export class AppService {
    * @returns {string}
    */
   getPrivateMessage(me: User) {
+    console.log('me', me);
     return { message: `Hello ${me.email}` };
   }
 

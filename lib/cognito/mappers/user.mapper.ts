@@ -26,6 +26,7 @@ export class UserMapper {
    */
   private static builderFromGetUser(user: GetUserResponse) {
     const { UserAttributes, Username } = user;
+    console.log('UserAttributes', JSON.stringify(UserAttributes));
     const email = UserAttributes.find(
       (attribute: any) => attribute.Name === 'email',
     )?.Value;

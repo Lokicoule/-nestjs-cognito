@@ -2,7 +2,6 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AbstractGuard } from '../abstract.guard';
 import { User } from '../user/user.model';
 import { AuthenticationValidator } from './authentication.validator';
-
 @Injectable()
 export class AuthenticationGuard extends AbstractGuard {
   /**

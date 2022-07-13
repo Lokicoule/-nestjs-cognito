@@ -41,7 +41,7 @@ export class User {
    * @returns {boolean} - True if the user has the group
    */
   public hasGroup(group: string): boolean {
-    return this._groups?.includes(group?.toLowerCase());
+    return Boolean(this._groups?.includes(group?.toLowerCase()));
   }
 
   /**
