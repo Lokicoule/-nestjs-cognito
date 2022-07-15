@@ -17,25 +17,19 @@ describe('memoize', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
-  it('should memo function with input and options', () => {
-    const fn = jest.fn(
-      (input: string, options: { foo: string }) =>
-        `result ${input} ${options.foo}`,
-    );
-    const memoizedFn = memoize(fn);
-    expect(memoizedFn('input', { foo: 'bar' })).toBe('result input bar');
-    expect(memoizedFn('input', { foo: 'bar' })).toBe('result input bar');
+  it('should memo function with passed defaultKey', () => {
+    const fn = jest.fn(() => 'result');
+    const memoizedFn = memoize(fn, 'generateKey');
+    expect(memoizedFn()).toBe('result');
+    expect(memoizedFn()).toBe('result');
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
-  it('should memo function with input and options and defaultKey', () => {
-    const fn = jest.fn(
-      (input: string, options: { foo: string }) =>
-        `result ${input} ${options.foo}`,
-    );
-    const memoizedFn = memoize(fn, 'defaultKey');
-    expect(memoizedFn('input', { foo: 'bar' })).toBe('result input bar');
-    expect(memoizedFn('input', { foo: 'bar' })).toBe('result input bar');
+  it('should memo function with built-in defaultKey', () => {
+    const fn = jest.fn(() => 'result');
+    const memoizedFn = memoize(fn);
+    expect(memoizedFn()).toBe('result');
+    expect(memoizedFn()).toBe('result');
     expect(fn).toHaveBeenCalledTimes(1);
   });
 });
