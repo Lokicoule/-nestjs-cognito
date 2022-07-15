@@ -3,12 +3,11 @@ import {
   GetUserResponse,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { UnauthorizedException } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CognitoModule } from '../cognito.module';
 import { UserBuilder } from '../user/user.builder';
 import { COGNITO_INSTANCE_TOKEN } from './cognito.constants';
 import { CognitoService } from './cognito.service';
-import { getCognitoIdentityProviderInstance } from './cognito.utils';
 
 describe('CognitoService', () => {
   let service: CognitoService;
@@ -16,13 +15,10 @@ describe('CognitoService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [JwtModule.register({})],
-      providers: [
-        CognitoService,
-        {
-          provide: COGNITO_INSTANCE_TOKEN,
-          useValue: getCognitoIdentityProviderInstance({}),
-        },
+      imports: [
+        CognitoModule.register({
+          region: 'us-east-1',
+        }),
       ],
     }).compile();
     client = module.get<CognitoIdentityProvider>(COGNITO_INSTANCE_TOKEN);
