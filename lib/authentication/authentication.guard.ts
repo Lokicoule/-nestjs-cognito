@@ -18,7 +18,7 @@ export class AuthenticationGuard extends AbstractGuard {
    * @param {User} user - The user
    * @returns {boolean} - True if the user is authenticated
    */
-  public onValidate(user: User): boolean {
+  public onValidate(user?: User): boolean {
     return AuthenticationValidator.useFactory().validate(user);
   }
 }

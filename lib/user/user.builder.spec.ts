@@ -12,11 +12,11 @@ describe('UserBuilder', () => {
       expect(user.groups).toEqual(['admin', 'user']);
     });
 
-    it('should return empty groups ', () => {
+    it('groups should return empty array ', () => {
       const user: User = new UserBuilder().setUsername('username').build();
       expect(user.username).toEqual('username');
       expect(user.email).toEqual(undefined);
-      expect(user.groups).toBeUndefined();
+      expect(user.groups).toEqual([]);
     });
   });
 });

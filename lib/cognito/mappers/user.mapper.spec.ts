@@ -1,3 +1,4 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { UserMapper } from './user.mapper';
 
 describe('UserMapper', () => {
@@ -30,6 +31,52 @@ describe('UserMapper', () => {
       expect(user.username).toBe('test');
       expect(user.email).toBe('test@email.com');
       expect(user.groups).toEqual(['admin']);
+    });
+
+    describe('GetUserResponse', () => {
+      it('should throw an error when username is missing', () => {
+        expect(() =>
+          UserMapper.fromGetUserAndDecodedJwt(
+            {
+              UserAttributes: [{ Name: 'email', Value: 'test@email.com' }],
+              Username: undefined,
+            },
+            {
+              'cognito:groups': ['admin'],
+            },
+          ),
+        ).toThrowError(
+          new UnauthorizedException(UserMapper.errors['username']),
+        );
+      });
+
+      it('should throw an error when email is missing', () => {
+        expect(() =>
+          UserMapper.fromGetUserAndDecodedJwt(
+            {
+              UserAttributes: [{ Name: 'other', Value: 'field' }],
+              Username: 'name',
+            },
+            {
+              'cognito:groups': ['admin'],
+            },
+          ),
+        ).toThrowError(new UnauthorizedException(UserMapper.errors['email']));
+      });
+    });
+
+    it('should throw an error when missing email and username', () => {
+      expect(() =>
+        UserMapper.fromGetUserAndDecodedJwt(
+          {
+            UserAttributes: [{ Name: 'other', Value: 'field' }],
+            Username: undefined,
+          },
+          {
+            'cognito:groups': ['admin'],
+          },
+        ),
+      ).toThrowError(new UnauthorizedException(UserMapper.errors['both']));
     });
   });
 });

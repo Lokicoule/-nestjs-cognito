@@ -61,7 +61,7 @@ export class AppWithAuthenticationDecoratorController {
 
 @Controller()
 @Authorization({
-  allowedGroups: ['admin'],
+  requiredGroups: ['admin'],
 })
 export class AppWithAuthorizationDecoratorController {
   constructor(private readonly appService: AppService) {}

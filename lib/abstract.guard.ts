@@ -33,14 +33,14 @@ export abstract class AbstractGuard implements CanActivate {
    * @param {User} user - The user
    * @returns {boolean} - True if the user is authenticated
    */
-  public abstract onValidate(user: User): boolean;
+  protected abstract onValidate(user: User): boolean;
 
   /**
    * Get the request from the execution context
    * @param {ExecutionContext} context - The execution context
    * @returns {Request} - The request
    */
-  public abstract getRequest(context: ExecutionContext): any;
+  protected abstract getRequest(context: ExecutionContext): any;
 
   /**
    * Get the authenticated user from the request
@@ -48,7 +48,7 @@ export abstract class AbstractGuard implements CanActivate {
    * @returns {User} - The user
    * @throws {UnauthorizedException} - If the user is not found
    */
-  public getAuthenticatedUser(request): User {
+  private getAuthenticatedUser(request): User {
     const user = request[COGNITO_USER_CONTEXT_PROPERTY];
 
     if (!Boolean(user)) {
@@ -68,6 +68,7 @@ export abstract class AbstractGuard implements CanActivate {
     if (!Boolean(request)) {
       throw new ServiceUnavailableException('Request is undefined or null.');
     }
+
     const { authorization } = request?.headers;
 
     if (!authorization) {

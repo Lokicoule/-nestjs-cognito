@@ -8,7 +8,7 @@ export class User {
   constructor(builder: UserBuilder) {
     this._username = builder.username;
     this._email = builder.email;
-    this._groups = builder.groups;
+    this._groups = builder.groups ?? [];
   }
 
   /**
@@ -40,8 +40,8 @@ export class User {
    * @param {string} group - The group
    * @returns {boolean} - True if the user has the group
    */
-  public hasGroup(group: string): boolean {
-    return Boolean(this._groups?.includes(group?.toLowerCase()));
+  private hasGroup(group: string): boolean {
+    return this._groups.includes(group?.toLowerCase());
   }
 
   /**

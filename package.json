@@ -37,6 +37,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-angular": "^17.0.3",
+    "@golevelup/ts-jest": "^0.3.3",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
@@ -84,7 +85,7 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "lib/**/*.(t|j)s",
+      "./lib/**/*.(t|j)s",
       "!**/**/index.(t|j)s"
     ],
     "coverageDirectory": "./coverage",

@@ -9,7 +9,7 @@ describe('User', () => {
         .setEmail('email')
         .setGroups(['Admin', 'User'])
         .build();
-      expect(user.hasGroup('Admin')).toBeTruthy();
+      expect(user.hasSomeGroup(['admin'])).toBeTruthy();
     });
     it("should return false if user doesn't have group", () => {
       const user: User = new UserBuilder()
@@ -17,14 +17,15 @@ describe('User', () => {
         .setEmail('email')
         .setGroups(['Admin', 'User'])
         .build();
-      expect(user.hasGroup('Moderator')).toBeFalsy();
+      expect(user.hasSomeGroup(['moderator'])).toBeFalsy();
     });
     it('should return false if user has no groups', () => {
       const user: User = new UserBuilder()
         .setUsername('username')
         .setEmail('email')
         .build();
-      expect(user.hasGroup('Admin')).toBeFalsy();
+      expect(user.hasSomeGroup(['admin'])).toBeFalsy();
+      expect(user.groups).toEqual([]);
     });
   });
 

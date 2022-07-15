@@ -1,18 +1,12 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  mixin,
-  Type,
-} from '@nestjs/common';
+import { CanActivate, Injectable, mixin, Type } from '@nestjs/common';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { User } from '../user/user.model';
 import { memoize } from '../utils/memoize.util';
 import { AuthorizationOptions } from './authorization.options';
 import { AuthorizationValidator } from './authorization.validator';
 
-export const createAuthorizationGuard = (
-  options?: AuthorizationOptions,
+const createAuthorizationGuard = (
+  options: AuthorizationOptions,
 ): Type<CanActivate> => {
   @Injectable()
   class AuthorizationGuardMixin extends AuthenticationGuard {
@@ -24,4 +18,6 @@ export const createAuthorizationGuard = (
   return mixin(AuthorizationGuardMixin);
 };
 
-export const AuthorizationGuard = memoize(createAuthorizationGuard);
+export const AuthorizationGuard: (
+  options: AuthorizationOptions,
+) => Type<CanActivate> = memoize(createAuthorizationGuard);
