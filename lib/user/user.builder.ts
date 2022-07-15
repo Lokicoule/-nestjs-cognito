@@ -18,7 +18,7 @@ export class UserBuilder {
    * @param {string} username - The username
    */
   public setUsername(username: string) {
-    this._username = username?.toLowerCase();
+    this._username = username.toLowerCase();
     return this;
   }
 
@@ -35,7 +35,7 @@ export class UserBuilder {
    * @param {string} email - The email address
    */
   public setEmail(email: string) {
-    this._email = email?.toLowerCase();
+    this._email = email.toLowerCase();
     return this;
   }
 
@@ -51,7 +51,7 @@ export class UserBuilder {
    * @param {string[]} groups - The groups
    */
   public setGroups(groups: string[]) {
-    this._groups = groups.map((group) => group?.toLowerCase());
+    this._groups = groups.map((group) => group.toLowerCase());
     return this;
   }
 
