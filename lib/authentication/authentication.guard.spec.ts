@@ -1,11 +1,10 @@
 import { createMock } from '@golevelup/ts-jest';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CognitoService, COGNITO_INSTANCE_TOKEN } from '../cognito';
-import { getCognitoIdentityProviderInstance } from '../cognito/cognito.utils';
+import { CognitoService } from '../cognito';
+import { CognitoModule } from '../cognito.module';
 import { UserBuilder } from '../user/user.builder';
 import { AuthenticationGuard } from './authentication.guard';
-import { JwtModule } from '@nestjs/jwt';
 
 describe('AuthenticationGuard', () => {
   let authenticationGuard: AuthenticationGuard;
@@ -13,15 +12,12 @@ describe('AuthenticationGuard', () => {
   describe('Injectable', () => {
     it('should be defined', async () => {
       const module: TestingModule = await Test.createTestingModule({
-        imports: [JwtModule.register({})],
-        providers: [
-          AuthenticationGuard,
-          CognitoService,
-          {
-            provide: COGNITO_INSTANCE_TOKEN,
-            useValue: getCognitoIdentityProviderInstance({}),
-          },
+        imports: [
+          CognitoModule.register({
+            region: 'us-east-1',
+          }),
         ],
+        providers: [AuthenticationGuard],
       }).compile();
       authenticationGuard =
         module.get<AuthenticationGuard>(AuthenticationGuard);
