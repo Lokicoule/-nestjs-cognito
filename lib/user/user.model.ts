@@ -40,8 +40,8 @@ export class User {
    * @param {string} group - The group
    * @returns {boolean} - True if the user has the group
    */
-  private hasGroup(group: string): boolean {
-    return this._groups.includes(group?.toLowerCase());
+  public hasGroup(group: string): boolean {
+    return this._groups.includes(group.toLowerCase());
   }
 
   /**
@@ -49,7 +49,7 @@ export class User {
    * @param {string[]} groups - The required groups
    * @returns {boolean} - True if the user has at least one of the required groups
    */
-  public hasSomeGroup(groups: string[] = []): boolean {
+  public hasSomeGroup(groups: string[]): boolean {
     return groups.some((group) => this.hasGroup(group));
   }
 
@@ -58,7 +58,7 @@ export class User {
    * @param {string[]} groups - The required groups
    * @returns {boolean} - True if the user has the required groups
    */
-  public hasAllGroups(groups: string[] = []): boolean {
+  public hasAllGroups(groups: string[]): boolean {
     return groups.every((group) => this.hasGroup(group));
   }
 }
