@@ -69,7 +69,7 @@ export abstract class AbstractGuard implements CanActivate {
       throw new ServiceUnavailableException('Request is undefined or null.');
     }
 
-    const { authorization } = request?.headers;
+    const { authorization } = request.headers;
 
     if (!authorization) {
       throw new UnauthorizedException('Authorization header is missing.');
