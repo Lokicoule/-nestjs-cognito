@@ -1,13 +1,23 @@
 # source
+.husky
+.github
+coverage
+.env
 lib
 index.ts
 package-lock.json
 tslint.json
 tsconfig.json
 .prettierrc
+nest.cli.json
+README.md
+tsconfig.build.json
+tests
 
 # misc 
 .commitlintrc.json
 .release-it.json
 .eslintignore
 .eslintrc.js
+
+
