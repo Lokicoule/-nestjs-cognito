@@ -5,19 +5,26 @@ import { memoize } from '../utils/memoize.util';
 import { AuthorizationOptions } from './authorization.options';
 import { AuthorizationValidator } from './authorization.validator';
 
-const createAuthorizationGuard = (
-  options: AuthorizationOptions,
-): Type<CanActivate> => {
-  @Injectable()
-  class AuthorizationGuardMixin extends AuthenticationGuard {
-    public onValidate(user: User): boolean {
-      return AuthorizationValidator.useFactory(options).validate(user, options);
-    }
-  }
+type Constructor<T extends AuthenticationGuard> = new (...args: any[]) => T;
 
-  return mixin(AuthorizationGuardMixin);
-};
+export const createAuthorizationGuard =
+  (options: AuthorizationOptions) =>
+  <T extends Constructor<AuthenticationGuard>>(Guard: T): Type<CanActivate> => {
+    @Injectable()
+    class AuthorizationGuardMixin extends Guard {
+      public onValidate(user: User): boolean {
+        return AuthorizationValidator.useFactory(options).validate(
+          user,
+          options,
+        );
+      }
+    }
+
+    return mixin(AuthorizationGuardMixin);
+  };
 
 export const AuthorizationGuard: (
   options: AuthorizationOptions,
-) => Type<CanActivate> = memoize(createAuthorizationGuard);
+) => Type<CanActivate> = memoize((options: AuthorizationOptions) =>
+  createAuthorizationGuard(options)(AuthenticationGuard),
+);
