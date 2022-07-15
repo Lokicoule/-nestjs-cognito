@@ -1,12 +1,16 @@
 import {
   AuthenticationResultType,
   CognitoIdentityProvider,
+  CognitoIdentityProviderClient,
   InitiateAuthRequest,
   RespondToAuthChallengeCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectCognitoIdentityProvider } from '../lib/cognito/cognito.decorators';
+import {
+  InjectCognitoIdentityProvider,
+  InjectCognitoIdentityProviderClient,
+} from '../lib/cognito/cognito.decorators';
 import { User } from '../lib/user/user.model';
 
 @Injectable()
@@ -14,6 +18,8 @@ export class AppService {
   constructor(
     @InjectCognitoIdentityProvider()
     private readonly client: CognitoIdentityProvider,
+    @InjectCognitoIdentityProviderClient()
+    private readonly providerClient: CognitoIdentityProviderClient,
     @Inject(ConfigService) private readonly configService: ConfigService,
   ) {}
 
