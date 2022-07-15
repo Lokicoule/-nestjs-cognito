@@ -54,9 +54,7 @@ describe('CognitoModule', () => {
                 implements CognitoModuleOptionsFactory
               {
                 createCognitoModuleOptions(): CognitoModuleOptions {
-                  return {
-                    region: 'us-east-1',
-                  };
+                  return {};
                 }
               },
             }),
